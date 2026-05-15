@@ -16,6 +16,7 @@ var (
 	ErrNotFound             = errors.New("not found")
 	ErrInvalidCredentials   = errors.New("invalid credentials")
 	ErrDuplicateEmail       = errors.New("duplicate email")
+	ErrInvalidNationality   = errors.New("invalid nationality")
 	ErrDocumentLimitReached = errors.New("document limit reached")
 )
 
@@ -28,56 +29,69 @@ func New(db *gorm.DB) *PassengerRepo {
 }
 
 func (r *PassengerRepo) CreateUser(req model.RegisterRequest) (*model.User, *model.Passenger, error) {
-	hash, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
-	if err != nil {
-		return nil, nil, err
-	}
+    hash, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
+    if err != nil {
+        return nil, nil, err
+    }
 
-	dob, err := time.Parse("2006-01-02", req.DateOfBirth)
-	if err != nil {
-		return nil, nil, err
-	}
+    dob, err := time.Parse("2006-01-02", req.DateOfBirth)
+    if err != nil {
+        return nil, nil, err
+    }
 
-	var user *model.User
-	var passenger *model.Passenger
+    nationality := strings.ToUpper(strings.TrimSpace(req.Nationality))
 
-	err = r.db.Transaction(func(tx *gorm.DB) error {
-		email := req.Email
-		passenger = &model.Passenger{
-			FirstName:   req.FirstName,
-			LastName:    req.LastName,
-			DateOfBirth: dob,
-			Gender:      req.Gender,
-			Email:       &email,
-			IsActive:    true,
-		}
-		if req.Nationality != "" {
-			passenger.Nationality = &req.Nationality
-		}
-		if req.PhoneNumber != "" {
-			passenger.PhoneNumber = &req.PhoneNumber
-		}
-		if err := tx.Create(passenger).Error; err != nil {
-			return err
-		}
+    var user *model.User
+    var passenger *model.Passenger
 
-		pid := passenger.PassengerID
-		user = &model.User{
-			PassengerID:  &pid,
-			Username:     req.Email,
-			Email:        req.Email,
-			PasswordHash: string(hash),
-			IsActive:     true,
-		}
-		return tx.Create(user).Error
-	})
-	if err != nil {
-		if isUniqueViolation(err) {
-			return nil, nil, ErrDuplicateEmail
-		}
-		return nil, nil, err
-	}
-	return user, passenger, nil
+    err = r.db.Transaction(func(tx *gorm.DB) error {
+        // Validate nationality within the same transaction to avoid TOCTOU/FK races
+        if nationality != "" {
+            var country model.Country
+            if err := tx.Where("country_id = ?", nationality).First(&country).Error; err != nil {
+                if errors.Is(err, gorm.ErrRecordNotFound) {
+                    return ErrInvalidNationality
+                }
+                return err
+            }
+        }
+
+        email := req.Email
+        passenger = &model.Passenger{
+            FirstName:   req.FirstName,
+            LastName:    req.LastName,
+            DateOfBirth: dob,
+            Gender:      req.Gender,
+            Email:       &email,
+            IsActive:    true,
+        }
+        if req.Nationality != "" {
+            passenger.Nationality = &nationality
+        }
+        if req.PhoneNumber != "" {
+            passenger.PhoneNumber = &req.PhoneNumber
+        }
+        if err := tx.Create(passenger).Error; err != nil {
+            return err
+        }
+
+        pid := passenger.PassengerID
+        user = &model.User{
+            PassengerID:  &pid,
+            Username:     req.Email,
+            Email:        req.Email,
+            PasswordHash: string(hash),
+            IsActive:     true,
+        }
+        return tx.Create(user).Error
+    })
+    if err != nil {
+        if isUniqueViolation(err) {
+            return nil, nil, ErrDuplicateEmail
+        }
+        return nil, nil, err
+    }
+    return user, passenger, nil
 }
 
 func (r *PassengerRepo) AuthenticateUser(email, password string) (*model.User, error) {

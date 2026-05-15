@@ -37,6 +37,10 @@ func (h *AuthHandler) Register(c *gin.Context) {
 			response.Conflict(c, "Email already registered")
 			return
 		}
+		if errors.Is(err, repository.ErrInvalidNationality) {
+			response.Unprocessable(c, "Invalid nationality code")
+			return
+		}
 		response.InternalError(c, "Failed to register user")
 		return
 	}
