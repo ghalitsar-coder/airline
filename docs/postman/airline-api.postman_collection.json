@@ -1,0 +1,754 @@
+{
+  "info": {
+    "_postman_id": "8f1e0f1f-9e5f-4a2b-9d2d-8dc5f4be31a1",
+    "name": "Airline API",
+    "description": "Postman collection for all Airline service routes. Set jwt_token for passenger protected endpoints and service_key for passenger internal validation.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "passenger_base_url", "value": "http://localhost:8001" },
+    { "key": "inventory_base_url", "value": "http://localhost:8002" },
+    { "key": "flight_ops_base_url", "value": "http://localhost:8003" },
+    { "key": "notification_base_url", "value": "http://localhost:8004" },
+    { "key": "booking_base_url", "value": "http://localhost:8005" },
+    { "key": "pricing_base_url", "value": "http://localhost:8006" },
+    { "key": "payment_base_url", "value": "http://localhost:8007" },
+    { "key": "loyalty_base_url", "value": "http://localhost:8008" },
+    { "key": "crew_base_url", "value": "http://localhost:8009" },
+    { "key": "maintenance_base_url", "value": "http://localhost:8010" },
+    { "key": "jwt_token", "value": "" },
+    { "key": "service_key", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Passenger Service",
+      "item": [
+        {
+          "name": "Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{passenger_base_url}}/health",
+            "description": "Health check for passenger-service."
+          }
+        },
+        {
+          "name": "Public",
+          "item": [
+            {
+              "name": "Register",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "url": "{{passenger_base_url}}/v1/auth/register",
+                "description": "Create a passenger account. Add JSON body in Postman before sending."
+              }
+            },
+            {
+              "name": "Login",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "url": "{{passenger_base_url}}/v1/auth/login",
+                "description": "Authenticate a passenger and get tokens. Add JSON body in Postman before sending."
+              }
+            },
+            {
+              "name": "Refresh Token",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "url": "{{passenger_base_url}}/v1/auth/refresh",
+                "description": "Refresh an access token. Add JSON body in Postman before sending."
+              }
+            },
+            {
+              "name": "Get Countries",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": "{{passenger_base_url}}/v1/countries",
+                "description": "List supported countries."
+              }
+            }
+          ]
+        },
+        {
+          "name": "Internal",
+          "item": [
+            {
+              "name": "Validate Passenger",
+              "request": {
+                "method": "GET",
+                "header": [
+                  { "key": "X-Service-Key", "value": "{{service_key}}" }
+                ],
+                "url": "{{passenger_base_url}}/v1/internal/passengers/:id/validate",
+                "description": "Service-to-service passenger validation. Requires X-Service-Key."
+              }
+            }
+          ]
+        },
+        {
+          "name": "Protected",
+          "item": [
+            {
+              "name": "Get Passenger",
+              "request": {
+                "method": "GET",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    { "key": "token", "value": "{{jwt_token}}", "type": "string" }
+                  ]
+                },
+                "header": [],
+                "url": "{{passenger_base_url}}/v1/passengers/:id",
+                "description": "Requires a valid bearer access token."
+              }
+            },
+            {
+              "name": "Update Passenger",
+              "request": {
+                "method": "PUT",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    { "key": "token", "value": "{{jwt_token}}", "type": "string" }
+                  ]
+                },
+                "header": [],
+                "url": "{{passenger_base_url}}/v1/passengers/:id",
+                "description": "Requires a valid bearer access token. Add JSON body in Postman before sending."
+              }
+            },
+            {
+              "name": "Create Document JSON",
+              "request": {
+                "method": "POST",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    { "key": "token", "value": "{{jwt_token}}", "type": "string" }
+                  ]
+                },
+                "header": [],
+                "url": "{{passenger_base_url}}/v1/passengers/:id/documents",
+                "description": "Create a passenger document from JSON payload."
+              }
+            },
+            {
+              "name": "Upload Document File",
+              "request": {
+                "method": "POST",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    { "key": "token", "value": "{{jwt_token}}", "type": "string" }
+                  ]
+                },
+                "header": [],
+                "url": "{{passenger_base_url}}/v1/passengers/:id/documents/upload",
+                "description": "Upload a passenger document file. Use form-data in Postman."
+              }
+            },
+            {
+              "name": "Get Documents",
+              "request": {
+                "method": "GET",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    { "key": "token", "value": "{{jwt_token}}", "type": "string" }
+                  ]
+                },
+                "header": [],
+                "url": "{{passenger_base_url}}/v1/passengers/:id/documents",
+                "description": "List passenger documents."
+              }
+            },
+            {
+              "name": "Delete Document",
+              "request": {
+                "method": "DELETE",
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    { "key": "token", "value": "{{jwt_token}}", "type": "string" }
+                  ]
+                },
+                "header": [],
+                "url": "{{passenger_base_url}}/v1/passengers/:id/documents/:docId",
+                "description": "Delete a passenger document."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Inventory Service",
+      "item": [
+        {
+          "name": "Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{inventory_base_url}}/health",
+            "description": "Health check for inventory-service."
+          }
+        },
+        {
+          "name": "List Aircraft Types",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{inventory_base_url}}/v1/aircraft-types"
+          }
+        },
+        {
+          "name": "Get Seat Map",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{inventory_base_url}}/v1/aircrafts/:id/seat-map"
+          }
+        },
+        {
+          "name": "Create Seat Reservation",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{inventory_base_url}}/v1/seat-reservations",
+            "description": "Add JSON body in Postman before sending."
+          }
+        },
+        {
+          "name": "Get Seat Reservation",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{inventory_base_url}}/v1/seat-reservations/:lockId"
+          }
+        },
+        {
+          "name": "Release Seat Reservation",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{inventory_base_url}}/v1/seat-reservations/:lockId"
+          }
+        },
+        {
+          "name": "Get Available Seats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{inventory_base_url}}/v1/flights/:flightId/available-seats"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Flight Ops Service",
+      "item": [
+        {
+          "name": "Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{flight_ops_base_url}}/health"
+          }
+        },
+        {
+          "name": "List Flights",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{flight_ops_base_url}}/v1/flights"
+          }
+        },
+        {
+          "name": "Get Flight",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{flight_ops_base_url}}/v1/flights/:id"
+          }
+        },
+        {
+          "name": "Update Flight Status",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": "{{flight_ops_base_url}}/v1/flights/:id/status",
+            "description": "Add JSON body in Postman before sending."
+          }
+        },
+        {
+          "name": "Get Operational Flight Data",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{flight_ops_base_url}}/v1/flights/:id/operational"
+          }
+        },
+        {
+          "name": "List Routes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{flight_ops_base_url}}/v1/routes"
+          }
+        },
+        {
+          "name": "List Gates",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{flight_ops_base_url}}/v1/airports/:code/gates"
+          }
+        },
+        {
+          "name": "Create Airport Slot",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{flight_ops_base_url}}/v1/airport-slots",
+            "description": "Add JSON body in Postman before sending."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Notification Service",
+      "item": [
+        {
+          "name": "Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{notification_base_url}}/health"
+          }
+        },
+        {
+          "name": "List Notifications",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{notification_base_url}}/v1/notifications"
+          }
+        },
+        {
+          "name": "Create Notification",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{notification_base_url}}/v1/notifications",
+            "description": "Add JSON body in Postman before sending."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Booking Service",
+      "item": [
+        {
+          "name": "Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{booking_base_url}}/health"
+          }
+        },
+        {
+          "name": "Create Booking",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{booking_base_url}}/v1/bookings",
+            "description": "Add JSON body in Postman before sending."
+          }
+        },
+        {
+          "name": "Get Booking By PNR",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{booking_base_url}}/v1/bookings/:pnr"
+          }
+        },
+        {
+          "name": "Confirm Booking",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": "{{booking_base_url}}/v1/bookings/:pnr/confirm",
+            "description": "Add JSON body in Postman before sending if needed."
+          }
+        },
+        {
+          "name": "Cancel Booking",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": "{{booking_base_url}}/v1/bookings/:pnr/cancel"
+          }
+        },
+        {
+          "name": "Change Booking",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": "{{booking_base_url}}/v1/bookings/:pnr/change",
+            "description": "Add JSON body in Postman before sending."
+          }
+        },
+        {
+          "name": "Check In Booking",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{booking_base_url}}/v1/bookings/:pnr/check-in",
+            "description": "Add JSON body in Postman before sending."
+          }
+        },
+        {
+          "name": "Add Baggage",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{booking_base_url}}/v1/bookings/:pnr/baggage",
+            "description": "Add JSON body in Postman before sending."
+          }
+        },
+        {
+          "name": "Get Boarding Pass",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{booking_base_url}}/v1/bookings/:pnr/boarding-pass"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Pricing Service",
+      "item": [
+        {
+          "name": "Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{pricing_base_url}}/health"
+          }
+        },
+        {
+          "name": "Search Prices",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{pricing_base_url}}/v1/prices/search"
+          }
+        },
+        {
+          "name": "Price Calendar",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{pricing_base_url}}/v1/prices/calendar"
+          }
+        },
+        {
+          "name": "Get Flight Price",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{pricing_base_url}}/v1/prices/:flightId"
+          }
+        },
+        {
+          "name": "Calculate Price",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{pricing_base_url}}/v1/prices/calculate",
+            "description": "Add JSON body in Postman before sending."
+          }
+        },
+        {
+          "name": "List Promotions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{pricing_base_url}}/v1/promotions"
+          }
+        },
+        {
+          "name": "Create Promotion",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{pricing_base_url}}/v1/promotions",
+            "description": "Add JSON body in Postman before sending."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Payment Service",
+      "item": [
+        {
+          "name": "Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{payment_base_url}}/health"
+          }
+        },
+        {
+          "name": "List Payments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{payment_base_url}}/v1/payments"
+          }
+        },
+        {
+          "name": "Get Payment",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{payment_base_url}}/v1/payments/:id"
+          }
+        },
+        {
+          "name": "Create Payment",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{payment_base_url}}/v1/payments",
+            "description": "Add JSON body in Postman before sending."
+          }
+        },
+        {
+          "name": "Payment Webhook",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{payment_base_url}}/v1/payments/webhook",
+            "description": "Webhook endpoint, usually called by Xendit. Add JSON body in Postman before sending."
+          }
+        },
+        {
+          "name": "Refund Payment",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{payment_base_url}}/v1/payments/:id/refund",
+            "description": "Add JSON body in Postman before sending."
+          }
+        },
+        {
+          "name": "Revenue Summary",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{payment_base_url}}/v1/revenue"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Loyalty Service",
+      "item": [
+        {
+          "name": "Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{loyalty_base_url}}/health"
+          }
+        },
+        {
+          "name": "List Tiers",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{loyalty_base_url}}/v1/loyalty/tiers"
+          }
+        },
+        {
+          "name": "Get Loyalty Profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{loyalty_base_url}}/v1/loyalty/:passengerId"
+          }
+        },
+        {
+          "name": "List Transactions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{loyalty_base_url}}/v1/loyalty/:passengerId/transactions"
+          }
+        },
+        {
+          "name": "Redeem Miles",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{loyalty_base_url}}/v1/loyalty/:passengerId/redeem",
+            "description": "Add JSON body in Postman before sending."
+          }
+        },
+        {
+          "name": "Reverse Miles",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{loyalty_base_url}}/v1/loyalty/:passengerId/reverse-miles",
+            "description": "Add JSON body in Postman before sending."
+          }
+        },
+        {
+          "name": "Earn Miles",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{loyalty_base_url}}/v1/loyalty/:passengerId/earn",
+            "description": "Add JSON body in Postman before sending."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Crew Service",
+      "item": [
+        {
+          "name": "Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{crew_base_url}}/health"
+          }
+        },
+        {
+          "name": "List Crew",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{crew_base_url}}/v1/crew"
+          }
+        },
+        {
+          "name": "Get Crew Member",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{crew_base_url}}/v1/crew/:id"
+          }
+        },
+        {
+          "name": "Get Crew Schedule",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{crew_base_url}}/v1/crew/:id/schedule"
+          }
+        },
+        {
+          "name": "Create Crew Assignment",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{crew_base_url}}/v1/crew/assignments",
+            "description": "Add JSON body in Postman before sending."
+          }
+        },
+        {
+          "name": "Update Crew Assignment",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": "{{crew_base_url}}/v1/crew/assignments/:id",
+            "description": "Add JSON body in Postman before sending."
+          }
+        },
+        {
+          "name": "Get Flight Crew",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{crew_base_url}}/v1/flights/:id/crew"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Maintenance Service",
+      "item": [
+        {
+          "name": "Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{maintenance_base_url}}/health"
+          }
+        },
+        {
+          "name": "List Maintenance Jobs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{maintenance_base_url}}/v1/maintenance"
+          }
+        },
+        {
+          "name": "Create Maintenance Job",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{maintenance_base_url}}/v1/maintenance",
+            "description": "Add JSON body in Postman before sending."
+          }
+        },
+        {
+          "name": "Get Maintenance Job",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{maintenance_base_url}}/v1/maintenance/:id"
+          }
+        },
+        {
+          "name": "Update Maintenance Status",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": "{{maintenance_base_url}}/v1/maintenance/:id/status",
+            "description": "Add JSON body in Postman before sending."
+          }
+        },
+        {
+          "name": "Approve Maintenance Job",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{maintenance_base_url}}/v1/maintenance/:id/approve",
+            "description": "Add JSON body in Postman before sending."
+          }
+        },
+        {
+          "name": "Maintenance History By Aircraft",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{maintenance_base_url}}/v1/aircrafts/:id/maintenance-history"
+          }
+        }
+      ]
+    }
+  ]
+}

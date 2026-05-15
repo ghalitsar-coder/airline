@@ -1,0 +1,353 @@
+
+version: '3.8'
+
+services:
+  # ==================== INFRASTRUKTUR ====================
+  postgres:
+    image: postgres:16-alpine
+    container_name: airline-postgres
+    environment:
+      POSTGRES_USER: airline
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_MULTIPLE_DATABASES: passenger_db,inventory_db,flight_db,notif_db,booking_db,pricing_db,payment_db,loyalty_db,crew_db,maintenance_db
+    ports:
+      - "5432:5432"
+    volumes:
+      # Named volume untuk data persisten PostgreSQL
+      - postgres_data:/var/lib/postgresql/data
+      # Bind mount untuk script inisialisasi (otomatis dijalankan saat container pertama kali dibuat)
+      - ./infrastructure/postgres/init-multiple-dbs.sh:/docker-entrypoint-initdb.d/01_init_dbs.sh:ro
+      - ./infrastructure/postgres/init-all.sql:/docker-entrypoint-initdb.d/02_init_all.sql:ro
+    networks:
+      - airline-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U airline"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: airline-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - airline-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: airline-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - "5672:5672"   # AMQP
+      - "15672:15672" # Management UI
+    networks:
+      - airline-net
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  minio:
+    image: minio/minio:latest
+    container_name: airline-minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    ports:
+      - "9000:9000"  # API
+      - "9001:9001"  # Console
+    volumes:
+      - minio_data:/data
+    networks:
+      - airline-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # ==================== SERVICES ====================
+  passenger-service:
+    build:
+      context: ./services/passenger-service
+      dockerfile: Dockerfile
+    container_name: passenger-service
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: passenger_db
+      DB_USER: airline
+      DB_PASSWORD: postgres
+      REDIS_URL: redis://redis:6379
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
+      MINIO_ENDPOINT: minio:9000
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: minioadmin
+      JWT_SECRET: airline-jwt-secret-dev
+      SERVICE_API_KEY: airline-internal-dev-key
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    ports:
+      - "8001:8001"
+    networks:
+      - airline-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  inventory-service:
+    build:
+      context: ./services/inventory-service
+      dockerfile: Dockerfile
+    container_name: inventory-service
+    environment:
+      PORT: 8002
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: inventory_db
+      DB_USER: airline
+      DB_PASSWORD: postgres
+      REDIS_URL: redis://redis:6379
+    ports:
+      - "8002:8002"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - airline-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8002/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  flight-ops-service:
+    build:
+      context: ./services/flight-ops-service
+      dockerfile: Dockerfile
+    container_name: flight-ops-service
+    environment:
+      PORT: 8003
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: flight_db
+      DB_USER: airline
+      DB_PASSWORD: postgres
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
+    ports:
+      - "8003:8003"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - airline-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8003/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  notification-service:
+    build:
+      context: ./services/notification-service
+      dockerfile: Dockerfile
+    container_name: notification-service
+    environment:
+      PORT: 8004
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: notif_db
+      DB_USER: airline
+      DB_PASSWORD: postgres
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
+      SMTP_HOST: mailtrap  # atau resend API key
+      SMTP_PORT: 2525
+      SMTP_USER: your_user
+      SMTP_PASSWORD: your_pass
+    ports:
+      - "8004:8004"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - airline-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8004/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  booking-service:
+    build:
+      context: ./services/booking-service
+      dockerfile: Dockerfile
+    container_name: booking-service
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: booking_db
+      DB_USER: airline
+      DB_PASSWORD: postgres
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
+      REDIS_URL: redis://redis:6379
+      PASSENGER_SERVICE_URL: http://passenger-service:8001
+      PASSENGER_SERVICE_API_KEY: airline-internal-dev-key
+      INVENTORY_SERVICE_URL: http://inventory-service:8002
+      PRICING_SERVICE_URL: http://pricing-service:8006
+      PAYMENT_SERVICE_URL: http://payment-service:8007
+    ports:
+      - "8005:8005"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      passenger-service:
+        condition: service_healthy
+      inventory-service:
+        condition: service_healthy
+      pricing-service:
+        condition: service_started
+      payment-service:
+        condition: service_started
+    networks:
+      - airline-net
+
+  pricing-service:
+    build:
+      context: ./services/pricing-service
+      dockerfile: Dockerfile
+    container_name: pricing-service
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: pricing_db
+      DB_USER: airline
+      DB_PASSWORD: postgres
+      REDIS_URL: redis://redis:6379
+    ports:
+      - "8006:8006"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - airline-net
+
+  payment-service:
+    build:
+      context: ./services/payment-service
+      dockerfile: Dockerfile
+    container_name: payment-service
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: payment_db
+      DB_USER: airline
+      DB_PASSWORD: postgres
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
+      XENDIT_API_KEY: ${XENDIT_API_KEY}   # dari .env file
+      XENDIT_CALLBACK_TOKEN: ${XENDIT_CALLBACK_TOKEN}
+    ports:
+      - "8007:8007"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - airline-net
+
+  loyalty-service:
+    build:
+      context: ./services/loyalty-service
+      dockerfile: Dockerfile
+    container_name: loyalty-service
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: loyalty_db
+      DB_USER: airline
+      DB_PASSWORD: postgres
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
+    ports:
+      - "8008:8008"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - airline-net
+
+  crew-service:
+    build:
+      context: ./services/crew-service
+      dockerfile: Dockerfile
+    container_name: crew-service
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: crew_db
+      DB_USER: airline
+      DB_PASSWORD: postgres
+    ports:
+      - "8009:8009"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - airline-net
+
+  maintenance-service:
+    build:
+      context: ./services/maintenance-service
+      dockerfile: Dockerfile
+    container_name: maintenance-service
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: maintenance_db
+      DB_USER: airline
+      DB_PASSWORD: postgres
+    ports:
+      - "8010:8010"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - airline-net
+
+volumes:
+  postgres_data:
+  minio_data:
+
+networks:
+  airline-net:
+    driver: bridge

@@ -1,0 +1,5 @@
+*
+!.dockerignore
+!pom.xml
+!src/
+!src/**
