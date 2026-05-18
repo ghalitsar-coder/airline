@@ -29,7 +29,7 @@ public class Payment extends PanacheEntityBase {
     @Column(name = "amount", precision = 14, scale = 2)
     public BigDecimal amount;
 
-    @Column(name = "currency_code", length = 3)
+    @Column(name = "currency_code", columnDefinition = "CHAR(3)", length = 3)
     public String currencyCode = "IDR";
 
     @PrePersist

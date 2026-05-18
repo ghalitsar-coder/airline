@@ -1,0 +1,187 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] --------------< com.skylink.airline:maintenance-service >---------------
+[INFO] Building maintenance-service 1.0.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] ------------------------------[ quarkus ]-------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ maintenance-service ---
+[INFO] Copying 1 resource from src/main/resources to target/classes
+[INFO] 
+[INFO] --- quarkus:3.35.3:generate-code (default-generate-code) @ maintenance-service ---
+[INFO] 
+[INFO] --- compiler:3.15.0:compile (default-compile) @ maintenance-service ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- quarkus:3.35.3:dev (default-cli) @ maintenance-service ---
+[INFO] Invoking quarkus:3.35.3:generate-code-tests (default-generate-code-tests) @ maintenance-service
+[INFO] Invoking resources:3.3.1:testResources (default-testResources) @ maintenance-service
+[INFO] skip non existing resourceDirectory /home/archlinux/My Works/airline/services/maintenance-service/src/test/resources
+[INFO] Invoking compiler:3.15.0:testCompile (default-testCompile) @ maintenance-service
+[INFO] Recompiling the module because of changed dependency.
+[WARNING] [io.quarkus.deployment.dev.DevModeCommandLineBuilder] Changed debug port to 34547 because of a port conflict
+Listening for transport dt_socket at address: 34547
+2026-05-16 07:50:58,828 WARN  [io.quarkus.deployment.index.IndexWrapper] (build-23) Failed to index UUID: Class does not exist in ClassLoader QuarkusClassLoader:Deployment Class Loader: DEV for maintenance-service-1.0.0-SNAPSHOT@4009e306
+2026-05-16 07:50:59,027 WARN  [io.quarkus.arc.processor.Methods] (build-27) Parameter type info not available: UUID - unable to validate the parameter type's visibility for method approve declared on com.skylink.airline.service.MaintenanceService
+2026-05-16 07:50:59,028 WARN  [io.quarkus.arc.processor.Methods] (build-27) Parameter type info not available: UUID - unable to validate the parameter type's visibility for method updateStatus declared on com.skylink.airline.service.MaintenanceService
+2026-05-16 07:50:59,347 INFO  [io.quarkus.deployment.dev.IsolatedDevModeMain] (main) Attempting to start live reload endpoint to recover from previous Quarkus startup failure
+Failed to start quarkus
+java.lang.RuntimeException: io.quarkus.builder.BuildException: Build failure: Build failed due to errors
+	[error]: Build step io.quarkus.resteasy.reactive.server.deployment.ResteasyReactiveProcessor#setupEndpoints threw an exception: java.lang.RuntimeException: java.lang.RuntimeException: Failed to process method 'com.skylink.airline.resource.MaintenanceResource#com.skylink.airline.dto.ApiResponse<java.lang.Object> get(UUID id)'. Reason: Could not create converter for UUID for method com.skylink.airline.dto.ApiResponse<java.lang.Object> get(UUID id) on class com.skylink.airline.resource.MaintenanceResource of type PATH
+	at org.jboss.resteasy.reactive.common.processor.EndpointIndexer.createEndpoints(EndpointIndexer.java:351)
+	at io.quarkus.resteasy.reactive.server.deployment.ResteasyReactiveProcessor.setupEndpoints(ResteasyReactiveProcessor.java:724)
+	at java.base/java.lang.invoke.MethodHandle.invokeWithArguments(MethodHandle.java:733)
+	at io.quarkus.deployment.ExtensionLoader$3.execute(ExtensionLoader.java:898)
+	at io.quarkus.builder.BuildContext.run(BuildContext.java:242)
+	at org.jboss.threads.ContextHandler$1.runWith(ContextHandler.java:18)
+	at org.jboss.threads.EnhancedQueueExecutor$Task.doRunWith(EnhancedQueueExecutor.java:2651)
+	at org.jboss.threads.EnhancedQueueExecutor$Task.run(EnhancedQueueExecutor.java:2630)
+	at org.jboss.threads.EnhancedQueueExecutor.runThreadBody(EnhancedQueueExecutor.java:1622)
+	at org.jboss.threads.EnhancedQueueExecutor$ThreadBody.run(EnhancedQueueExecutor.java:1589)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+	at org.jboss.threads.JBossThread.run(JBossThread.java:501)
+Caused by: java.lang.RuntimeException: Failed to process method 'com.skylink.airline.resource.MaintenanceResource#com.skylink.airline.dto.ApiResponse<java.lang.Object> get(UUID id)'. Reason: Could not create converter for UUID for method com.skylink.airline.dto.ApiResponse<java.lang.Object> get(UUID id) on class com.skylink.airline.resource.MaintenanceResource of type PATH
+	at org.jboss.resteasy.reactive.common.processor.EndpointIndexer.createResourceMethod(EndpointIndexer.java:826)
+	at org.jboss.resteasy.reactive.common.processor.EndpointIndexer.createEndpoints(EndpointIndexer.java:448)
+	at org.jboss.resteasy.reactive.common.processor.EndpointIndexer.createEndpoints(EndpointIndexer.java:312)
+	... 11 more
+Caused by: java.lang.RuntimeException: Could not create converter for UUID for method com.skylink.airline.dto.ApiResponse<java.lang.Object> get(UUID id) on class com.skylink.airline.resource.MaintenanceResource of type PATH
+	at org.jboss.resteasy.reactive.server.processor.ServerEndpointIndexer.handleOtherParam(ServerEndpointIndexer.java:502)
+	at org.jboss.resteasy.reactive.server.processor.ServerEndpointIndexer.handleOtherParam(ServerEndpointIndexer.java:105)
+	at org.jboss.resteasy.reactive.common.processor.EndpointIndexer.extractParameterInfo(EndpointIndexer.java:1527)
+	at org.jboss.resteasy.reactive.common.processor.EndpointIndexer.createResourceMethod(EndpointIndexer.java:629)
+	... 13 more
+Caused by: java.lang.RuntimeException: Failed to find converter for UUID
+	at org.jboss.resteasy.reactive.server.processor.generation.converters.GeneratedConverterIndexerExtension.extractConverterImpl(GeneratedConverterIndexerExtension.java:106)
+	at org.jboss.resteasy.reactive.server.processor.ServerEndpointIndexer.extractConverter(ServerEndpointIndexer.java:731)
+	at org.jboss.resteasy.reactive.server.processor.ServerEndpointIndexer.handleOtherParam(ServerEndpointIndexer.java:498)
+	... 16 more
+
+	at io.quarkus.runner.bootstrap.AugmentActionImpl.runAugment(AugmentActionImpl.java:441)
+	at io.quarkus.runner.bootstrap.AugmentActionImpl.createInitialRuntimeApplication(AugmentActionImpl.java:355)
+	at io.quarkus.runner.bootstrap.AugmentActionImpl.createInitialRuntimeApplication(AugmentActionImpl.java:65)
+	at io.quarkus.deployment.dev.IsolatedDevModeMain.firstStart(IsolatedDevModeMain.java:90)
+	at io.quarkus.deployment.dev.IsolatedDevModeMain.accept(IsolatedDevModeMain.java:436)
+	at io.quarkus.deployment.dev.IsolatedDevModeMain.accept(IsolatedDevModeMain.java:56)
+	at io.quarkus.bootstrap.app.CuratedApplication.runInCl(CuratedApplication.java:157)
+	at io.quarkus.bootstrap.app.CuratedApplication.runInAugmentClassLoader(CuratedApplication.java:98)
+	at io.quarkus.deployment.dev.DevModeMain.start(DevModeMain.java:106)
+	at io.quarkus.deployment.dev.DevModeMain.main(DevModeMain.java:68)
+Caused by: io.quarkus.builder.BuildException: Build failure: Build failed due to errors
+	[error]: Build step io.quarkus.resteasy.reactive.server.deployment.ResteasyReactiveProcessor#setupEndpoints threw an exception: java.lang.RuntimeException: java.lang.RuntimeException: Failed to process method 'com.skylink.airline.resource.MaintenanceResource#com.skylink.airline.dto.ApiResponse<java.lang.Object> get(UUID id)'. Reason: Could not create converter for UUID for method com.skylink.airline.dto.ApiResponse<java.lang.Object> get(UUID id) on class com.skylink.airline.resource.MaintenanceResource of type PATH
+	at org.jboss.resteasy.reactive.common.processor.EndpointIndexer.createEndpoints(EndpointIndexer.java:351)
+	at io.quarkus.resteasy.reactive.server.deployment.ResteasyReactiveProcessor.setupEndpoints(ResteasyReactiveProcessor.java:724)
+	at java.base/java.lang.invoke.MethodHandle.invokeWithArguments(MethodHandle.java:733)
+	at io.quarkus.deployment.ExtensionLoader$3.execute(ExtensionLoader.java:898)
+	at io.quarkus.builder.BuildContext.run(BuildContext.java:242)
+	at org.jboss.threads.ContextHandler$1.runWith(ContextHandler.java:18)
+	at org.jboss.threads.EnhancedQueueExecutor$Task.doRunWith(EnhancedQueueExecutor.java:2651)
+	at org.jboss.threads.EnhancedQueueExecutor$Task.run(EnhancedQueueExecutor.java:2630)
+	at org.jboss.threads.EnhancedQueueExecutor.runThreadBody(EnhancedQueueExecutor.java:1622)
+	at org.jboss.threads.EnhancedQueueExecutor$ThreadBody.run(EnhancedQueueExecutor.java:1589)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+	at org.jboss.threads.JBossThread.run(JBossThread.java:501)
+Caused by: java.lang.RuntimeException: Failed to process method 'com.skylink.airline.resource.MaintenanceResource#com.skylink.airline.dto.ApiResponse<java.lang.Object> get(UUID id)'. Reason: Could not create converter for UUID for method com.skylink.airline.dto.ApiResponse<java.lang.Object> get(UUID id) on class com.skylink.airline.resource.MaintenanceResource of type PATH
+	at org.jboss.resteasy.reactive.common.processor.EndpointIndexer.createResourceMethod(EndpointIndexer.java:826)
+	at org.jboss.resteasy.reactive.common.processor.EndpointIndexer.createEndpoints(EndpointIndexer.java:448)
+	at org.jboss.resteasy.reactive.common.processor.EndpointIndexer.createEndpoints(EndpointIndexer.java:312)
+	... 11 more
+Caused by: java.lang.RuntimeException: Could not create converter for UUID for method com.skylink.airline.dto.ApiResponse<java.lang.Object> get(UUID id) on class com.skylink.airline.resource.MaintenanceResource of type PATH
+	at org.jboss.resteasy.reactive.server.processor.ServerEndpointIndexer.handleOtherParam(ServerEndpointIndexer.java:502)
+	at org.jboss.resteasy.reactive.server.processor.ServerEndpointIndexer.handleOtherParam(ServerEndpointIndexer.java:105)
+	at org.jboss.resteasy.reactive.common.processor.EndpointIndexer.extractParameterInfo(EndpointIndexer.java:1527)
+	at org.jboss.resteasy.reactive.common.processor.EndpointIndexer.createResourceMethod(EndpointIndexer.java:629)
+	... 13 more
+Caused by: java.lang.RuntimeException: Failed to find converter for UUID
+	at org.jboss.resteasy.reactive.server.processor.generation.converters.GeneratedConverterIndexerExtension.extractConverterImpl(GeneratedConverterIndexerExtension.java:106)
+	at org.jboss.resteasy.reactive.server.processor.ServerEndpointIndexer.extractConverter(ServerEndpointIndexer.java:731)
+	at org.jboss.resteasy.reactive.server.processor.ServerEndpointIndexer.handleOtherParam(ServerEndpointIndexer.java:498)
+	... 16 more
+
+	at io.quarkus.builder.Execution.run(Execution.java:139)
+	at io.quarkus.builder.BuildExecutionBuilder.execute(BuildExecutionBuilder.java:76)
+	at io.quarkus.deployment.QuarkusAugmentor.run(QuarkusAugmentor.java:182)
+	at io.quarkus.runner.bootstrap.AugmentActionImpl.runAugment(AugmentActionImpl.java:437)
+	... 9 more
+Caused by: java.lang.RuntimeException: java.lang.RuntimeException: Failed to process method 'com.skylink.airline.resource.MaintenanceResource#com.skylink.airline.dto.ApiResponse<java.lang.Object> get(UUID id)'. Reason: Could not create converter for UUID for method com.skylink.airline.dto.ApiResponse<java.lang.Object> get(UUID id) on class com.skylink.airline.resource.MaintenanceResource of type PATH
+	at org.jboss.resteasy.reactive.common.processor.EndpointIndexer.createEndpoints(EndpointIndexer.java:351)
+	at io.quarkus.resteasy.reactive.server.deployment.ResteasyReactiveProcessor.setupEndpoints(ResteasyReactiveProcessor.java:724)
+	at java.base/java.lang.invoke.MethodHandle.invokeWithArguments(MethodHandle.java:733)
+	at io.quarkus.deployment.ExtensionLoader$3.execute(ExtensionLoader.java:898)
+	at io.quarkus.builder.BuildContext.run(BuildContext.java:242)
+	at org.jboss.threads.ContextHandler$1.runWith(ContextHandler.java:18)
+	at org.jboss.threads.EnhancedQueueExecutor$Task.doRunWith(EnhancedQueueExecutor.java:2651)
+	at org.jboss.threads.EnhancedQueueExecutor$Task.run(EnhancedQueueExecutor.java:2630)
+	at org.jboss.threads.EnhancedQueueExecutor.runThreadBody(EnhancedQueueExecutor.java:1622)
+	at org.jboss.threads.EnhancedQueueExecutor$ThreadBody.run(EnhancedQueueExecutor.java:1589)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+	at org.jboss.threads.JBossThread.run(JBossThread.java:501)
+Caused by: java.lang.RuntimeException: Failed to process method 'com.skylink.airline.resource.MaintenanceResource#com.skylink.airline.dto.ApiResponse<java.lang.Object> get(UUID id)'. Reason: Could not create converter for UUID for method com.skylink.airline.dto.ApiResponse<java.lang.Object> get(UUID id) on class com.skylink.airline.resource.MaintenanceResource of type PATH
+	at org.jboss.resteasy.reactive.common.processor.EndpointIndexer.createResourceMethod(EndpointIndexer.java:826)
+	at org.jboss.resteasy.reactive.common.processor.EndpointIndexer.createEndpoints(EndpointIndexer.java:448)
+	at org.jboss.resteasy.reactive.common.processor.EndpointIndexer.createEndpoints(EndpointIndexer.java:312)
+	... 11 more
+Caused by: java.lang.RuntimeException: Could not create converter for UUID for method com.skylink.airline.dto.ApiResponse<java.lang.Object> get(UUID id) on class com.skylink.airline.resource.MaintenanceResource of type PATH
+	at org.jboss.resteasy.reactive.server.processor.ServerEndpointIndexer.handleOtherParam(ServerEndpointIndexer.java:502)
+	at org.jboss.resteasy.reactive.server.processor.ServerEndpointIndexer.handleOtherParam(ServerEndpointIndexer.java:105)
+	at org.jboss.resteasy.reactive.common.processor.EndpointIndexer.extractParameterInfo(EndpointIndexer.java:1527)
+	at org.jboss.resteasy.reactive.common.processor.EndpointIndexer.createResourceMethod(EndpointIndexer.java:629)
+	... 13 more
+Caused by: java.lang.RuntimeException: Failed to find converter for UUID
+	at org.jboss.resteasy.reactive.server.processor.generation.converters.GeneratedConverterIndexerExtension.extractConverterImpl(GeneratedConverterIndexerExtension.java:106)
+	at org.jboss.resteasy.reactive.server.processor.ServerEndpointIndexer.extractConverter(ServerEndpointIndexer.java:731)
+	at org.jboss.resteasy.reactive.server.processor.ServerEndpointIndexer.handleOtherParam(ServerEndpointIndexer.java:498)
+	... 16 more
+Failed to recover after failed start
+java.lang.RuntimeException: java.lang.RuntimeException: Unable to start HTTP server
+	at io.quarkus.vertx.http.runtime.VertxHttpRecorder.startServerAfterFailedStart(VertxHttpRecorder.java:339)
+	at io.quarkus.vertx.http.runtime.devmode.VertxHttpHotReplacementSetup.handleFailedInitialStart(VertxHttpHotReplacementSetup.java:74)
+	at io.quarkus.deployment.dev.RuntimeUpdatesProcessor.startupFailed(RuntimeUpdatesProcessor.java:1444)
+	at io.quarkus.deployment.dev.IsolatedDevModeMain.firstStart(IsolatedDevModeMain.java:127)
+	at io.quarkus.deployment.dev.IsolatedDevModeMain.accept(IsolatedDevModeMain.java:436)
+	at io.quarkus.deployment.dev.IsolatedDevModeMain.accept(IsolatedDevModeMain.java:56)
+	at io.quarkus.bootstrap.app.CuratedApplication.runInCl(CuratedApplication.java:157)
+	at io.quarkus.bootstrap.app.CuratedApplication.runInAugmentClassLoader(CuratedApplication.java:98)
+	at io.quarkus.deployment.dev.DevModeMain.start(DevModeMain.java:106)
+	at io.quarkus.deployment.dev.DevModeMain.main(DevModeMain.java:68)
+Caused by: java.lang.RuntimeException: Unable to start HTTP server
+	at io.quarkus.vertx.http.runtime.VertxHttpRecorder.doServerStart(VertxHttpRecorder.java:1009)
+	at io.quarkus.vertx.http.runtime.VertxHttpRecorder.startServerAfterFailedStart(VertxHttpRecorder.java:330)
+	... 9 more
+Caused by: java.util.concurrent.ExecutionException: io.quarkus.runtime.QuarkusBindException: Port already bound: 8010: Address already in use
+	at java.base/java.util.concurrent.CompletableFuture.reportGet(CompletableFuture.java:396)
+	at java.base/java.util.concurrent.CompletableFuture.get(CompletableFuture.java:2073)
+	at io.quarkus.vertx.http.runtime.VertxHttpRecorder.doServerStart(VertxHttpRecorder.java:926)
+	... 10 more
+Caused by: io.quarkus.runtime.QuarkusBindException: Port already bound: 8010: Address already in use
+	at io.quarkus.vertx.http.runtime.VertxHttpRecorder$WebDeploymentVerticle$3.handle(VertxHttpRecorder.java:1395)
+	at io.quarkus.vertx.http.runtime.VertxHttpRecorder$WebDeploymentVerticle$3.handle(VertxHttpRecorder.java:1390)
+	at io.vertx.core.impl.future.FutureImpl$4.onFailure(FutureImpl.java:188)
+	at io.vertx.core.impl.future.FutureBase.emitFailure(FutureBase.java:81)
+	at io.vertx.core.impl.future.FutureImpl.tryFail(FutureImpl.java:278)
+	at io.vertx.core.impl.future.FixedMapping.onFailure(FixedMapping.java:36)
+	at io.vertx.core.impl.future.FutureBase.emitFailure(FutureBase.java:81)
+	at io.vertx.core.impl.future.FutureImpl.tryFail(FutureImpl.java:278)
+	at io.vertx.core.impl.future.FixedMapping.onFailure(FixedMapping.java:36)
+	at io.vertx.core.impl.future.FutureBase.lambda$emitFailure$1(FutureBase.java:75)
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask(AbstractEventExecutor.java:173)
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java:166)
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:472)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:569)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:998)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  7.216 s
+[INFO] Finished at: 2026-05-16T07:51:00+07:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal io.quarkus.platform:quarkus-maven-plugin:3.35.3:dev (default-cli) on project maintenance-service: Failed to run: Dev mode process did not complete successfully -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

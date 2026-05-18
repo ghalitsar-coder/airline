@@ -32,7 +32,7 @@ public class RevenueAccounting extends PanacheEntityBase {
     @Column(name = "tax_amount", nullable = false, precision = 12, scale = 2)
     public BigDecimal taxAmount = BigDecimal.ZERO;
 
-    @Column(name = "currency_code", length = 3)
+    @Column(name = "currency_code", columnDefinition = "CHAR(3)", length = 3)
     public String currencyCode;
 
     @PrePersist

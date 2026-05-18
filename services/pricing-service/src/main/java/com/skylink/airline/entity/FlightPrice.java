@@ -33,7 +33,7 @@ public class FlightPrice extends PanacheEntityBase {
     @Column(name = "tax_amount", nullable = false)
     public BigDecimal taxAmount;
 
-    @Column(name = "currency_code")
+    @Column(name = "currency_code", columnDefinition = "CHAR(3)")
     public String currencyCode;
 
     @Column(name = "valid_from", nullable = false)
